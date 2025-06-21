@@ -1,10 +1,27 @@
 version: '3'
 services:
-  db:
-    image: postgres
+  app:
+    build: .
+    ports:
+      - "8080:8080"
     environment:
-      POSTGRES_DB: f1
+      DB_USER: user
+      DB_PASS: pass
+      DB_NAME: f1
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
+      POSTGRES_DB: f1
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
