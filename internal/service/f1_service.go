@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"CORSAF1/internal/model"
-	"CORSAF1/internal/repository"
+	"CorsaF1/internal/model"
+	"CorsaF1/internal/repository"
 	"io/ioutil"
 	"net/http"
 )

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"CORSAF1/internal/api"
-	"CORSAF1/internal/cache"
-	"CORSAF1/internal/config"
-	"CORSAF1/internal/repository"
-	"CORSAF1/internal/scheduler"
+	"CorsaF1/internal/api"
+	"CorsaF1/internal/cache"
+	"CorsaF1/internal/config"
+	"CorsaF1/internal/repository"
+	"CorsaF1/internal/scheduler"
 	"github.com/gin-gonic/gin"
 	"log"
 )

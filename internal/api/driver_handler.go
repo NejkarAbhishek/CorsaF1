@@ -1,7 +1,7 @@
 package api
 
 import (
-	"f1insight/internal/service"
+	"CorsaF1/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

@@ -1,7 +1,7 @@
 package scheduler
 
 import (
-	"f1insight/internal/service"
+	"CorsaF1/internal/service"
 	"github.com/robfig/cron/v3"
 	"log"
 )

@@ -9,8 +9,10 @@ services:
       DB_PASS: pass
       DB_NAME: f1
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   db:
     image: postgres:15
@@ -20,6 +22,11 @@ services:
       POSTGRES_DB: f1
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:latest
