@@ -1,9 +1,10 @@
 package api
 
 import (
+	"CorsaF1/internal/service"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
-	"corsaf1/internal/service"
 )
 
 func GetConstructors(c *gin.Context) {

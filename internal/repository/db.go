@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"CorsaF1/internal/model"
 	"fmt"
 	"log"
 	"os"
@@ -8,7 +9,6 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"CorsaF1/internal/model"
 )
 
 var DB *gorm.DB
@@ -40,10 +40,14 @@ func InitDB() {
 	}
 
 	log.Println("Successfully connected to the database. Running migrations.")
-	DB.AutoMigrate(&model.Driver{})
+	DB.AutoMigrate(&model.Driver{}, &model.Constructor{})
 	log.Println("Migrations completed.")
 }
 
 func SaveDrivers(drivers []model.Driver) error {
 	return DB.Create(&drivers).Error
+}
+
+func SaveConstructors(constructors []model.Constructor) error {
+	return DB.Create(&constructors).Error
 }

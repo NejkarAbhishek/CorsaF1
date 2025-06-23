@@ -1,9 +1,10 @@
 package api
 
 import (
+	"CorsaF1/internal/service"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
-	"corsaf1/internal/service"
 )
 
 func CompareDrivers(c *gin.Context) {
@@ -16,6 +17,10 @@ func CompareDrivers(c *gin.Context) {
 		return
 	}
 
-	result := service.CompareDrivers(season, driverA, driverB)
+	result, err := service.CompareDrivers(season, driverA, driverB)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, result)
 }

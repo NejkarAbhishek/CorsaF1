@@ -1,12 +1,14 @@
 package service
 
 import (
-	"encoding/json"
-	"fmt"
 	"CorsaF1/internal/model"
 	"CorsaF1/internal/repository"
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 type DriverStanding struct {
@@ -80,10 +82,13 @@ func FetchConstructors() ([]model.Constructor, error) {
 		for _, c := range teams {
 			item := c.(map[string]interface{})
 			con := item["Constructor"].(map[string]interface{})
+			winsStr := item["wins"].(string)
+			winsInt, _ := strconv.Atoi(winsStr)
+
 			constructors = append(constructors, model.Constructor{
 				Name:        con["name"].(string),
 				Nationality: con["nationality"].(string),
-				Wins:        int(item["wins"].(float64)),
+				Wins:        winsInt,
 			})
 		}
 		repository.SaveConstructors(constructors)
@@ -92,12 +97,49 @@ func FetchConstructors() ([]model.Constructor, error) {
 	return constructors, nil
 }
 
-func CompareDrivers(season, driverA, driverB string) model.ComparisonResult {
+func CompareDrivers(season, driverA, driverB string) (model.ComparisonResult, error) {
+	url := fmt.Sprintf("https://api.jolpi.ca/ergast/f1/%s/driverStandings.json", season)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return model.ComparisonResult{}, fmt.Errorf("failed to fetch standings: %v", err)
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return model.ComparisonResult{}, err
+	}
+
+	standings := result["MRData"].(map[string]interface{})["StandingsTable"].(map[string]interface{})["StandingsLists"].([]interface{})
+	if len(standings) == 0 {
+		return model.ComparisonResult{}, fmt.Errorf("no data for season %s", season)
+	}
+
+	drivers := standings[0].(map[string]interface{})["DriverStandings"].([]interface{})
+
+	winsA, winsB := 0, 0
+
+	for _, d := range drivers {
+		entry := d.(map[string]interface{})
+		driver := entry["Driver"].(map[string]interface{})
+		familyName := strings.ToLower(driver["familyName"].(string))
+		winsStr := entry["wins"].(string)
+		wins, _ := strconv.Atoi(winsStr)
+
+		if strings.Contains(familyName, strings.ToLower(driverA)) {
+			winsA = wins
+		} else if strings.Contains(familyName, strings.ToLower(driverB)) {
+			winsB = wins
+		}
+	}
+
 	return model.ComparisonResult{
 		Season:  season,
 		DriverA: driverA,
 		DriverB: driverB,
-		WinsA:   7,
-		WinsB:   3,
-	}
+		WinsA:   winsA,
+		WinsB:   winsB,
+	}, nil
 }
