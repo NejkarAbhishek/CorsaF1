@@ -5,7 +5,6 @@ import "github.com/gin-gonic/gin"
 func RegisterRoutes(r *gin.Engine) {
 	r.GET("/drivers", GetDrivers)
 	r.GET("/schedule", GetSchedule)
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "pong"})
-	})
+	r.GET("/constructors", GetConstructors)
+	r.GET("/compare", CompareDrivers)
 }

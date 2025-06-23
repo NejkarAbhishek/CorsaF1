@@ -8,3 +8,10 @@ type Driver struct {
 	Position string
 	Points   string
 }
+
+type Constructor struct {
+	gorm.Model
+	Name       string
+	Nationality string
+	Wins       int
+}

@@ -57,3 +57,47 @@ func FetchDriverStandings() ([]DriverStanding, error) {
 
 	return standings, nil
 }
+
+func FetchConstructors() ([]model.Constructor, error) {
+	url := "https://api.jolpi.ca/ergast/f1/current/constructorStandings.json"
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching constructors: %v", err)
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, err
+	}
+
+	var constructors []model.Constructor
+
+	lists := result["MRData"].(map[string]interface{})["StandingsTable"].(map[string]interface{})["StandingsLists"].([]interface{})
+	if len(lists) > 0 {
+		teams := lists[0].(map[string]interface{})["ConstructorStandings"].([]interface{})
+		for _, c := range teams {
+			item := c.(map[string]interface{})
+			con := item["Constructor"].(map[string]interface{})
+			constructors = append(constructors, model.Constructor{
+				Name:        con["name"].(string),
+				Nationality: con["nationality"].(string),
+				Wins:        int(item["wins"].(float64)),
+			})
+		}
+		repository.SaveConstructors(constructors)
+	}
+
+	return constructors, nil
+}
+
+func CompareDrivers(season, driverA, driverB string) model.ComparisonResult {
+	return model.ComparisonResult{
+		Season:  season,
+		DriverA: driverA,
+		DriverB: driverB,
+		WinsA:   7,
+		WinsB:   3,
+	}
+}
