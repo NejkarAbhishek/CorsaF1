@@ -13,6 +13,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    command: ["sh", "-c", "env && /app/server"]
 
   db:
     image: postgres:15
@@ -23,7 +24,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user"]
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "f1"]
       interval: 5s
       timeout: 5s
       retries: 5

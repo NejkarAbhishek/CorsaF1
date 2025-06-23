@@ -7,7 +7,7 @@ import (
 )
 
 func GetSchedule(c *gin.Context) {
-	resp, err := http.Get("https://ergast.com/api/f1/current.json")
+	resp, err := http.Get("https://api.jolpi.ca/ergast/f1/current.json")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch schedule"})
 		return

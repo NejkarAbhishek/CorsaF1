@@ -8,6 +8,12 @@ import (
 	"CorsaF1/internal/scheduler"
 	"github.com/gin-gonic/gin"
 	"log"
+	"database/sql"
+	"fmt"
+	"log"
+	"os"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {

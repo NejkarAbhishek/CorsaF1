@@ -16,7 +16,7 @@ type DriverStanding struct {
 }
 
 func FetchDriverStandings() ([]DriverStanding, error) {
-	url := "https://ergast.com/api/f1/current/driverStandings.json"
+	url := "https://api.jolpi.ca/ergast/f1/current/driverStandings.json"
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching driver standings: %v", err)
