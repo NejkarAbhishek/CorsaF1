@@ -6,8 +6,10 @@ import (
 	"CorsaF1/internal/config"
 	"CorsaF1/internal/repository"
 	"CorsaF1/internal/scheduler"
-	"github.com/gin-gonic/gin"
 	"log"
+	"os"
+
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
@@ -15,7 +17,11 @@ func main() {
 
 	config.LoadEnv()
 
-	repository.InitDB()
+	if os.Getenv("SKIP_DB") != "true" {
+		repository.InitDB()
+	} else {
+		log.Println("SKIP_DB is true — skipping database initialization.")
+	}
 
 	cache.InitRedis()
 
@@ -24,7 +30,11 @@ func main() {
 	r := gin.Default()
 	api.RegisterRoutes(r)
 
-	err := r.Run(":8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	err := r.Run(":" + port)
 	if err != nil {
 		log.Fatal("Server start failed: ", err)
 	}

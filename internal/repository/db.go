@@ -14,6 +14,11 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
+	if os.Getenv("SKIP_DB") == "true" {
+		log.Println("Skipping DB init in Cloud Run.")
+		return
+	}
+
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
 	dbName := os.Getenv("DB_NAME")
